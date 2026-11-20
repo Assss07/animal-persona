@@ -46,14 +46,14 @@
     <div class="intro-meta">
       <div><b>18</b><span>道题</span></div>
       <div><b>3</b><span>分钟</span></div>
-      <div><b id="meta-price-num">0.99</b><span id="meta-price-label">元看全文</span></div>
+      <div><b id="meta-price-num">1.99</b><span id="meta-price-label">元看全文</span></div>
     </div>
 
     <button class="ink-btn" id="btn-start">
       <span>开始</span>
       <i>→</i>
     </button>
-    <p class="tiny" id="intro-tiny">答完先看半份，觉得像再付。付完能保存，也能分享。</p>
+    <p class="tiny" id="intro-tiny">答完先看半份，觉得像再解锁。一次买断，永久可看。</p>
   </section>
 
   <!-- 答题 -->
@@ -84,7 +84,7 @@
     <div class="traits" id="preview-traits"></div>
 
     <div class="locked-block">
-      <div class="locked-fade" aria-hidden="true">
+      <div class="locked-fade" id="locked-fade" aria-hidden="true">
         <p>你进门时不一定先说话，但会先看一圈：谁和谁一伙，谁在硬撑。熟的人知道，你一旦认了，就很少往后退。</p>
         <p>你在意的东西，多半和这两件事有关。人多的时候你不怯场，可热闹散了，你需要一段谁也别找你的时间。</p>
         <p>容易卡住你的地方，也在这里。你不太争那个说了算的位置，别人定，你配合。</p>
@@ -98,10 +98,10 @@
 
     <button class="ink-btn" id="btn-unlock">
       <span>解锁完整报告</span>
-      <i>¥0.99</i>
+      <i id="unlock-price">¥1.99</i>
     </button>
     <button class="text-btn" id="btn-unlock-code">我有解锁码</button>
-    <p class="tiny center" id="preview-note">演示环境可模拟支付，不会真扣钱。</p>
+    <p class="tiny center" id="preview-note">一次买断，不订阅。</p>
   </section>
 
   <!-- 完整报告 -->
@@ -151,14 +151,14 @@
     <p class="eyebrow">完整报告</p>
     <h3 id="sheet-title">解锁前，确认一下</h3>
     <p class="sheet-copy">四段解读、五维图、专属金句，付完就能看，刷新也还在。</p>
-    <div class="price-row"><b>¥0.99</b><span>一次买断 · 不订阅</span></div>
-    <a class="ink-btn buy-btn" id="btn-buy" href="#" target="_blank" rel="noopener" hidden><span>去下单</span><i>¥0.99</i></a>
-    <button class="ink-btn" id="btn-demo-pay"><span>模拟支付</span><i>演示</i></button>
+    <div class="price-row"><b id="sheet-price">¥1.99</b><span>一次买断 · 不订阅</span></div>
+    <a class="ink-btn buy-btn" id="btn-buy" href="#" target="_blank" rel="noopener" hidden><span>去下单</span><i id="buy-price">¥1.99</i></a>
+    <p class="tiny center" id="buy-contact" hidden></p>
     <div class="code-row">
-      <input id="unlock-code" type="text" inputmode="text" placeholder="输入解锁码" autocomplete="off">
+      <input id="unlock-code" type="text" inputmode="text" placeholder="输入 12 位解锁码" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="14">
       <button id="btn-code-submit">解锁</button>
     </div>
-    <p class="tiny center" id="sheet-note">演示环境不会真扣钱。正式收款需要接店铺或商户通道。</p>
+    <p class="tiny center" id="sheet-note">付款后凭解锁码查看完整报告。</p>
   </div>
 </div>
 

@@ -3,6 +3,7 @@
 
   var STORE_KEY = "animal_result_v2";
   var ANSWER_KEY = "animal_answers_v1";
+  var UNLOCK_KEY = "animal_unlocked_v1";
   var HEADINGS = ["别人看到的你", "你放在心上的东西", "容易卡住的地方", "怎么和你相处更舒服"];
 
   var DATA = null;
@@ -13,11 +14,16 @@
     preview: null,
     report: null,
     sharePath: "",
-    demoPay: false,
-    buyUrl: "",
-    free: true,
     submitting: false
   };
+
+  var CONFIG = {
+    price_cents: 199,
+    buy_url: "",
+    contact: "",
+    contact_note: ""
+  };
+  var CODES = null;
 
   function $(id) { return document.getElementById(id); }
 
@@ -43,6 +49,64 @@
         savedAt: Date.now()
       }));
     } catch (e) {}
+  }
+
+  function loadConfig() {
+    return fetch("config.json", { cache: "no-cache" })
+      .then(function (res) { return res.ok ? res.json() : {}; })
+      .then(function (data) {
+        if (data && typeof data.price_cents === "number") CONFIG.price_cents = data.price_cents;
+        if (data && typeof data.buy_url === "string") CONFIG.buy_url = data.buy_url;
+        if (data && typeof data.contact === "string") CONFIG.contact = data.contact;
+        if (data && typeof data.contact_note === "string") CONFIG.contact_note = data.contact_note;
+        return CONFIG;
+      })
+      .catch(function () { return CONFIG; });
+  }
+
+  function loadCodes() {
+    if (CODES) return Promise.resolve(CODES);
+    return fetch("codes.json", { cache: "no-cache" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("解锁码数据加载失败");
+        return res.json();
+      })
+      .then(function (data) {
+        CODES = (data && data.codes) || [];
+        return CODES;
+      });
+  }
+
+  function priceText() {
+    return (CONFIG.price_cents / 100).toFixed(2);
+  }
+
+  function normalizeCode(code) {
+    return String(code || "").toUpperCase().replace(/[^0-9A-Z]/g, "");
+  }
+
+  function isUnlocked() {
+    try { return localStorage.getItem(UNLOCK_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function sha256Hex(text) {
+    var bytes = new TextEncoder().encode(text);
+    return crypto.subtle.digest("SHA-256", bytes).then(function (buffer) {
+      return Array.prototype.map.call(new Uint8Array(buffer), function (b) {
+        return ("0" + b.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  function verifyCode(code) {
+    var normalized = normalizeCode(code);
+    if (normalized.length !== 12) return Promise.resolve(false);
+    if (!(window.crypto && crypto.subtle)) {
+      return Promise.reject(new Error("这个浏览器不支持解锁，换一个试试"));
+    }
+    return sha256Hex(normalized).then(function (hash) {
+      return CODES.indexOf(hash) !== -1;
+    });
   }
 
   var toastTimer = null;
@@ -159,7 +223,12 @@
       state.sharePath = "r/?a=" + encodeURIComponent(result.animal);
       saveResult(result);
       state.submitting = false;
-      renderReport(report);
+      if (isUnlocked()) {
+        renderReport(report);
+      } else {
+        renderPreview();
+        show("screen-preview");
+      }
     }).catch(function (err) {
       state.submitting = false;
       toast(err.message || "提交失败，请重试");
@@ -185,6 +254,16 @@
       s.textContent = t;
       traits.appendChild(s);
     });
+
+    var fade = $("locked-fade");
+    if (fade && state.report) {
+      fade.innerHTML = "";
+      state.report.paragraphs.slice(0, 3).forEach(function (text, i) {
+        var p = document.createElement("p");
+        p.textContent = text.slice(0, i === 0 ? 78 : 48) + "…";
+        fade.appendChild(p);
+      });
+    }
   }
 
   function renderReport(report) {
@@ -241,7 +320,12 @@
         traits: report.traits
       };
       state.sharePath = "r/?a=" + encodeURIComponent(result.animal);
-      renderReport(report);
+      if (isUnlocked()) {
+        renderReport(report);
+      } else {
+        renderPreview();
+        show("screen-preview");
+      }
       return report;
     });
   }
@@ -610,37 +694,65 @@
   }
 
   // ---------- 解锁 ----------
-  function applyFreeMode() {
-    if (!state.free) return;
-    $("meta-price-num").textContent = "免费";
-    $("meta-price-label").textContent = "看全文";
-    $("intro-tiny").textContent = "答完直接看全文，不收钱。觉得像，把卡片转给一个你想到的人。";
-    $("preview-note").textContent = "免费版直接看全文。";
+  function applyPrice() {
+    var price = priceText();
+    $("meta-price-num").textContent = price;
+    $("meta-price-label").textContent = "元看全文";
+    $("intro-tiny").textContent = "答完先看半份，觉得像再解锁。一次买断，永久可看。";
+    $("preview-note").textContent = "一次买断，不订阅。";
+    $("unlock-price").textContent = "¥" + price;
+    $("sheet-price").textContent = "¥" + price;
+    $("buy-price").textContent = "¥" + price;
+    $("unlock-code").placeholder = "输入 12 位解锁码";
   }
 
   function openSheet() {
-    if (!state.preview) { toast("先答完题"); return; }
+    if (!state.report) { toast("先答完题"); return; }
     $("sheet-mask").hidden = false;
-    $("sheet-note").textContent = state.demoPay
-      ? "演示环境不会真扣钱。正式收款走平台下单，发一次性解锁码。"
-      : (state.buyUrl
-        ? "下单后会自动发解锁码，回来填上就能看。"
-        : "购买后凭一次性解锁码查看完整报告。");
-    $("btn-demo-pay").style.display = state.demoPay ? "" : "none";
+
     var buy = $("btn-buy");
-    if (state.buyUrl && !state.demoPay) {
-      buy.href = state.buyUrl;
+    if (CONFIG.buy_url) {
+      buy.href = CONFIG.buy_url;
       buy.hidden = false;
+      $("sheet-note").textContent = "下单后自动发解锁码，回来填上就能看。";
     } else {
       buy.hidden = true;
+      $("sheet-note").textContent = CONFIG.contact
+        ? "转账后把截图发给卖家，拿到解锁码再回来填。"
+        : "付款后凭解锁码查看完整报告。";
     }
+
+    var contact = $("buy-contact");
+    if (CONFIG.contact) {
+      contact.hidden = false;
+      contact.textContent = CONFIG.contact_note || ("加微信 " + CONFIG.contact + " 转账，发你解锁码");
+    } else {
+      contact.hidden = true;
+    }
+
+    if (isUnlocked()) $("sheet-note").textContent = "这台设备已经解锁过了。";
   }
 
   function closeSheet() { $("sheet-mask").hidden = true; }
 
-  function unlock() {
-    closeSheet();
-    toast("免费版已经能看全文");
+  function unlock(payload) {
+    if (!state.report) { toast("先答完题"); return; }
+    var btn = $("btn-code-submit");
+    btn.disabled = true;
+    loadCodes().then(function () {
+      return verifyCode(payload.code);
+    }).then(function (ok) {
+      btn.disabled = false;
+      if (!ok) { toast("解锁码不对，检查一下"); return; }
+      try { localStorage.setItem(UNLOCK_KEY, "1"); } catch (e) {}
+      $("unlock-code").value = "";
+      closeSheet();
+      toast("已解锁");
+      renderReport(state.report);
+    }).catch(function (err) {
+      btn.disabled = false;
+      toast(err.message || "解锁失败，重试一次");
+    });
   }
 
   function retest() {
@@ -667,7 +779,6 @@
     openSheet();
     setTimeout(function () { $("unlock-code").focus(); }, 260);
   });
-  $("btn-demo-pay").addEventListener("click", function () { unlock({ mode: "demo" }); });
   $("btn-code-submit").addEventListener("click", function () {
     var code = $("unlock-code").value.trim();
     if (!code) { toast("先填解锁码"); return; }
@@ -675,6 +786,11 @@
   });
   $("unlock-code").addEventListener("keydown", function (e) {
     if (e.key === "Enter") $("btn-code-submit").click();
+  });
+  $("unlock-code").addEventListener("input", function () {
+    var digits = normalizeCode(this.value).slice(0, 12);
+    var parts = digits.match(/.{1,4}/g) || [];
+    this.value = parts.join("-");
   });
   $("sheet-close").addEventListener("click", closeSheet);
   $("sheet-mask").addEventListener("click", function (e) {
@@ -700,7 +816,7 @@
   window.App = {
     home: function (e) {
       if (e) e.preventDefault();
-      if (state.report) show("screen-report");
+      if (state.report && isUnlocked()) show("screen-report");
       else if (state.preview) show("screen-preview");
       else show("screen-intro");
     }
@@ -708,12 +824,12 @@
 
   // ---------- 启动 ----------
   loadAnswers();
-  state.free = true;
-  applyFreeMode();
-  loadData().then(function () {
-    $("preview-note").textContent = "免费版直接看全文，不收钱。";
-    $("unlock-code").placeholder = "免费版不需要解锁码";
-  }).catch(function () { toast("题目加载失败，检查网络"); });
+  Promise.all([loadData(), loadConfig(), loadCodes()]).then(function () {
+    applyPrice();
+  }).catch(function (err) {
+    applyPrice();
+    toast(err && err.message ? err.message : "加载失败，检查网络");
+  });
 
   restoreSession().then(function (restored) {
     if (!restored) show("screen-intro");
