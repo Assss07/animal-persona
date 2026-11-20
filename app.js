@@ -23,7 +23,7 @@
 
   function loadData() {
     if (DATA) return Promise.resolve(DATA);
-    return fetch("data.json", { cache: "force-cache" })
+    return fetch("data.json", { cache: "no-cache" })
       .then(function (res) {
         if (!res.ok) throw new Error("题目加载失败");
         return res.json();
