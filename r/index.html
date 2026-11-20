@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2ebdd">
+<title>看看你心里藏了什么动物</title>
+<meta name="description" content="十八个日常选择，拼出你心里那只动物的样子。免费测，三分钟出结果。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="薪火木 · 小测">
+<meta property="og:title" content="看看你心里藏了什么动物">
+<meta property="og:description" content="十八个日常选择，拼出你心里那只动物的样子。免费测，三分钟出结果。">
+<meta property="og:image" content="https://assss07.github.io/animal-persona/og/jpg/default.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="800">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f2ebdd'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23b23a26'%3E兽%3C/text%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#f2ebdd;color:#1b1814;
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  min-height:100vh;display:flex;justify-content:center;
+  padding:20px 18px calc(28px + env(safe-area-inset-bottom));
+}
+.wrap{width:100%;max-width:420px}
+.bar{display:flex;justify-content:space-between;align-items:baseline;margin:2px 2px 14px;color:#6f6557;font-size:12px;letter-spacing:.04em}
+.bar b{color:#1b1814;font-weight:600}
+.bar .mark{display:inline-flex;width:22px;height:22px;background:#1b1814;color:#f2ebdd;border-radius:3px;align-items:center;justify-content:center;font-size:13px;margin-right:7px;vertical-align:-5px}
+.card{width:100%;height:auto;display:block;border-radius:4px;box-shadow:0 18px 44px rgba(43,34,24,.16),0 2px 0 rgba(43,34,24,.06);background:#e7ddca}
+.lead{text-align:center;margin:20px 0 4px;font-family:"Songti SC","STSong","SimSun",serif;font-size:19px;letter-spacing:.02em}
+.lead span{color:#b23a26}
+.cta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:18px;padding:0 22px;height:58px;border-radius:4px;
+  background:#242019;color:#f7f1e5;text-decoration:none;
+  font-size:17px;letter-spacing:.04em;font-weight:600;
+  box-shadow:0 8px 18px rgba(35,29,21,.18);
+}
+.cta i{font-style:normal;font-weight:400;color:#d8cbb5;font-size:14px}
+.sub{text-align:center;color:#8a7f6f;font-size:12px;margin-top:12px;line-height:1.9}
+.sub b{font-weight:500;color:#6f6557}
+.foot{text-align:center;color:#a2988a;font-size:11px;margin-top:26px;line-height:1.8}
+@media (min-width:520px){ body{padding-top:34px} .wrap{max-width:460px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <span><span class="mark">薪</span><b>薪火木 · 小测</b></span>
+    <span>朋友的结果</span>
+  </div>
+
+  <img class="card" id="card" src="../og/jpg/default.jpg" width="600" height="800" alt="动物人格结果卡">
+
+  <p class="lead">TA 心里藏的是一只<span id="name">动物</span></p>
+
+  <a class="cta" href="../?from=share">
+    <span>我也要测</span><i>18 题 · 免费</i>
+  </a>
+  <p class="sub">十八个日常选择，拼出你心里那只动物。<br><b>3 分钟出结果，能存分享卡。</b></p>
+
+  <p class="foot">这是一份性格倾向参考，不构成专业评估。<br>© 薪火木</p>
+</div>
+<script>
+(function () {
+  var ANIMALS = {
+    wolf: "狼", deer: "鹿", fox: "狐狸", hedgehog: "刺猬",
+    whale: "鲸鱼", otter: "水獭", owl: "猫头鹰", hummingbird: "蜂鸟",
+    snow_leopard: "雪豹", peacock: "孔雀", camel: "骆驼", crow: "乌鸦"
+  };
+  var key = new URLSearchParams(location.search).get("a") || "";
+  if (!Object.prototype.hasOwnProperty.call(ANIMALS, key)) key = "default";
+  var name = ANIMALS[key] || "动物";
+  var img = document.getElementById("card");
+  img.src = "../og/jpg/" + key + ".jpg";
+  img.alt = name + " · 人格结果卡";
+  document.getElementById("name").textContent = name;
+  document.title = "我心里藏着一只" + name;
+  var og = document.querySelector('meta[property="og:title"]');
+  if (og) og.setAttribute("content", document.title);
+  var ogi = document.querySelector('meta[property="og:image"]');
+  if (ogi) ogi.setAttribute("content", new URL(img.src, location.href).href);
+})();
+</script>
+</body>
+</html>

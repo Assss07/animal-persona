@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2ebdd">
+<title>看看你心里藏了什么动物</title>
+<meta name="description" content="十八个日常选择，拼出你心里那只动物的样子。免费测，三分钟出结果。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="薪火木 · 小测">
+<meta property="og:title" content="看看你心里藏了什么动物">
+<meta property="og:description" content="十八个日常选择，拼出你心里那只动物的样子。免费测，三分钟出结果。">
+<meta property="og:image" content="https://assss07.github.io/animal-persona/og/jpg/default.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="800">
+<link rel="stylesheet" href="app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f2ebdd'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23b23a26'%3E兽%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="grain"></div>
+<div class="bgchar" aria-hidden="true">兽</div>
+
+<header class="topbar">
+  <a class="brand" href="./" onclick="App.home(event)">
+    <span class="brand-mark">薪</span>
+    <span class="brand-name">薪火木 · 小测</span>
+  </a>
+  <span class="topbar-note" id="topnote">18 道题 · 约 3 分钟</span>
+</header>
+
+<main id="stage">
+
+  <!-- 首屏 -->
+  <section class="screen is-active" id="screen-intro">
+    <p class="eyebrow">一份不太正经的人格参考</p>
+    <h1 class="hero-title">
+      看看你<br>
+      心里藏了<br>
+      <span class="ink-red">什么动物</span>
+    </h1>
+    <svg class="brush-line" viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M4 9 C48 2 96 12 142 5 C178 0 210 8 236 4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+    <p class="lede">十八个日常选择，拼出你身上那只动物的样子。不是算命，是一面照得比较准的镜子。</p>
+
+    <div class="intro-meta">
+      <div><b>18</b><span>道题</span></div>
+      <div><b>3</b><span>分钟</span></div>
+      <div><b id="meta-price-num">0.99</b><span id="meta-price-label">元看全文</span></div>
+    </div>
+
+    <button class="ink-btn" id="btn-start">
+      <span>开始</span>
+      <i>→</i>
+    </button>
+    <p class="tiny" id="intro-tiny">答完先看半份，觉得像再付。付完能保存，也能分享。</p>
+  </section>
+
+  <!-- 答题 -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-head">
+      <button class="back-btn" id="btn-back" aria-label="上一题">←</button>
+      <div class="progress-wrap">
+        <div class="progress-track"><i id="progress-fill"></i></div>
+        <div class="progress-num"><b id="q-index">01</b><span>/ 18</span></div>
+      </div>
+    </div>
+    <div class="q-body" id="q-body">
+      <p class="q-kicker" id="q-kicker">第 1 题</p>
+      <h2 class="q-text" id="q-text"></h2>
+      <div class="options" id="options"></div>
+    </div>
+    <p class="quiz-hint">凭第一反应选，别想太久。</p>
+  </section>
+
+  <!-- 锁定预览 -->
+  <section class="screen" id="screen-preview">
+    <p class="eyebrow center">你心里那只动物是</p>
+    <div class="animal-seal" id="preview-seal">
+      <span id="preview-char">狼</span>
+    </div>
+    <h2 class="animal-name" id="preview-name">狼</h2>
+    <p class="animal-hook" id="preview-hook"></p>
+    <div class="traits" id="preview-traits"></div>
+
+    <div class="locked-block">
+      <div class="locked-fade" aria-hidden="true">
+        <p>你进门时不一定先说话，但会先看一圈：谁和谁一伙，谁在硬撑。熟的人知道，你一旦认了，就很少往后退。</p>
+        <p>你在意的东西，多半和这两件事有关。人多的时候你不怯场，可热闹散了，你需要一段谁也别找你的时间。</p>
+        <p>容易卡住你的地方，也在这里。你不太争那个说了算的位置，别人定，你配合。</p>
+      </div>
+      <div class="locked-cover">
+        <span class="lock-ico">◍</span>
+        <b>完整报告锁住了</b>
+        <span>五维分数 · 四段解读 · 专属金句</span>
+      </div>
+    </div>
+
+    <button class="ink-btn" id="btn-unlock">
+      <span>解锁完整报告</span>
+      <i>¥0.99</i>
+    </button>
+    <button class="text-btn" id="btn-unlock-code">我有解锁码</button>
+    <p class="tiny center" id="preview-note">演示环境可模拟支付，不会真扣钱。</p>
+  </section>
+
+  <!-- 完整报告 -->
+  <section class="screen" id="screen-report">
+    <p class="eyebrow center">你的动物</p>
+    <div class="report-hero">
+      <span class="report-char" id="report-char">狼</span>
+      <div class="report-hero-meta">
+        <h2 id="report-name">狼</h2>
+        <p id="report-hook"></p>
+      </div>
+    </div>
+    <div class="traits" id="report-traits"></div>
+
+    <div class="radar-wrap">
+      <canvas id="radar" width="640" height="560"></canvas>
+      <p class="radar-cap">五维倾向 · 不是评分，是你把力气花在哪</p>
+    </div>
+
+    <div class="report-body" id="report-body"></div>
+
+    <p class="contrast" id="report-contrast"></p>
+    <p class="secondary-line" id="report-secondary"></p>
+
+    <div class="quote-card" id="quote-card">
+      <span class="quote-mark">“</span>
+      <p id="report-quote"></p>
+      <span class="quote-sign" id="quote-sign">狼 · 动物人格</span>
+    </div>
+
+    <div class="report-actions">
+      <button class="ink-btn" id="btn-save-card">
+        <span>保存分享卡</span><i>↓</i>
+      </button>
+      <button class="ghost-btn" id="btn-share">复制链接发给朋友</button>
+      <button class="ghost-btn" id="btn-copy">复制这句话</button>
+      <button class="text-btn" id="btn-retest">再测一次</button>
+    </div>
+    <p class="disclaimer" id="report-disclaimer">这是一份性格倾向参考，不构成专业评估。</p>
+  </section>
+</main>
+
+<!-- 解锁弹层 -->
+<div class="sheet-mask" id="sheet-mask" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <button class="sheet-close" id="sheet-close" aria-label="关闭">×</button>
+    <p class="eyebrow">完整报告</p>
+    <h3 id="sheet-title">解锁前，确认一下</h3>
+    <p class="sheet-copy">四段解读、五维图、专属金句，付完就能看，刷新也还在。</p>
+    <div class="price-row"><b>¥0.99</b><span>一次买断 · 不订阅</span></div>
+    <a class="ink-btn buy-btn" id="btn-buy" href="#" target="_blank" rel="noopener" hidden><span>去下单</span><i>¥0.99</i></a>
+    <button class="ink-btn" id="btn-demo-pay"><span>模拟支付</span><i>演示</i></button>
+    <div class="code-row">
+      <input id="unlock-code" type="text" inputmode="text" placeholder="输入解锁码" autocomplete="off">
+      <button id="btn-code-submit">解锁</button>
+    </div>
+    <p class="tiny center" id="sheet-note">演示环境不会真扣钱。正式收款需要接店铺或商户通道。</p>
+  </div>
+</div>
+
+<div class="share-tip" id="share-tip" hidden>
+  <div class="share-tip-card">
+    <p class="tip-kicker">链接已复制</p>
+    <h4>点右上角 ··· 发给朋友</h4>
+    <p class="tip-copy">微信里没法直接调起分享，用右上角菜单里的「发送给朋友」。</p>
+    <button class="ghost-btn" id="share-tip-close">知道了</button>
+  </div>
+</div>
+
+<div class="img-tip" id="img-tip" hidden>
+  <div class="img-tip-card">
+    <p class="tip-kicker">长按图片保存</p>
+    <img id="img-tip-img" alt="分享卡">
+    <p class="tip-copy">微信里不能直接下载，长按这张图，选「保存图片」，就能发朋友圈或发给朋友。</p>
+    <button class="ghost-btn" id="img-tip-close">知道了</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
